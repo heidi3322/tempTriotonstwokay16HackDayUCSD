@@ -19,7 +19,7 @@ function filter(obj){
 	keys.forEach(function(e){
 		x = obj[e][0]
 		y = obj[e][1]
-		if(x >= 64 && y >= 55 && x <= 832 && y <= 495 && objValIndexOf(coordinates,[x,y]) == -1){
+		if(x >= 64 && y >= 55 && x <= 1216 && y <= 495 && objValIndexOf(coordinates,[x,y]) == -1){
 			valid[counter++] = obj[e]
 		}
 	});
@@ -63,10 +63,13 @@ function round(num, places){
 	return Math.round(num)/a
 	
 }
+function shuffle(o){
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+}
 
-function createRandom(x, y, prob){
+function randomBranch(x, y, prob){
 	neighbors = filter(getNeighbors(x,y))
-	console.log(neighbors);
 	keys = Object.keys(neighbors);
 	if(keys.length > 0){
 		counter = 0;
@@ -78,7 +81,26 @@ function createRandom(x, y, prob){
 				x = neighbors[e][0];
 				y = neighbors[e][1];
 				createHexagon(x,y);
-				if(Math.random()*100 <= prob -20){
+			}
+		});
+	}
+	
+}
+
+function createRandom(x, y, prob){
+	neighbors = filter(getNeighbors(x,y))
+	keys = Object.keys(neighbors);
+	if(keys.length > 0){
+		counter = 0;
+		fillarray = [];
+		emptycounter = 0;
+		emptyarray = [];
+		keys.forEach(function(e){
+			if(Math.random()*100 <= prob){
+				x = neighbors[e][0];
+				y = neighbors[e][1];
+				createHexagon(x,y);
+				if(Math.random()*100 <= prob -5){
 					fillarray[counter++] = [x,y];
 				}
 				/*newList = filter(getNeighbors(x,y));
@@ -92,8 +114,10 @@ function createRandom(x, y, prob){
 				});*/
 			}
 		});
+		shuffle(fillarray);
+		console.log("filled:" + fillarray);
 		for(i = 0; i < fillarray.length; i++){
-			createRandom(fillarray[i][0], fillarray[i][1], prob - 20);
+			createRandom(fillarray[i][0], fillarray[i][1], prob - 1);
 		}
 	}
 }
@@ -102,7 +126,7 @@ $(document).ready(function(){
 	x = 384
 	y = 220
 	createHexagon(384, 220);
-	createRandom(x, y, 120);
+	createRandom(x, y, 100);
 	
 	
 	
