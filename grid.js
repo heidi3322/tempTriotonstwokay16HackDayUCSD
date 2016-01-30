@@ -117,15 +117,16 @@ function createRandom(x, y, prob){
 		shuffle(fillarray);
 		console.log("filled:" + fillarray);
 		for(i = 0; i < fillarray.length; i++){
+			
 			createRandom(fillarray[i][0], fillarray[i][1], prob - 1);
 		}
 	}
 }
 
 $(document).ready(function(){
-	x = 384
+	x = 640
 	y = 220
-	createHexagon(384, 220);
+	createHexagon(x, y);
 	createRandom(x, y, 100);
 	
 	
