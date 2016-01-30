@@ -11,7 +11,21 @@ function createHexagon(x, y){
 	document.body.appendChild(img);
 	
 }
+function canMove(x, y) {
+    if (objValIndexOf(coordinates, [x,y]) == -1) {
+        return false;
+    }
+    return true; 
+}
 
+function move_player(x, y) {
+    if (canMove(x, y) == false) {
+        return;
+    }
+    
+    
+    
+}
 function filter(obj){
 	keys = Object.keys(obj);
 	valid = [];
