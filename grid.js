@@ -29,9 +29,9 @@ function filter(obj){
 function add_player(x,y)
 {
 	var img = document.createElement("img");
-	img.attr = ("src","player.png");
-	c = {"position":"absolute", "top":y, "left":x};
-	img.css = c;
+	$(img).attr("src","CatSlime.gif");
+	c = {"position":"absolute", "top":y-10, "left":x};
+	$(img).css(c);
 	coordinates[[x,y]] = [x,y];
 	document.body.appendChild(img);
 }
@@ -127,7 +127,7 @@ $(document).ready(function(){
 	y = 220
 	createHexagon(384, 220);
 	createRandom(x, y, 100);
-	
+	add_player(x,y);
 	
 	
 });
