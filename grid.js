@@ -1,5 +1,6 @@
 var coordinates = {}
 var numcoords = 0
+var charCoords= {}
 
 
 function createHexagon(x, y){
@@ -30,10 +31,15 @@ function add_player(x,y)
 {
 	var img = document.createElement("img");
 	$(img).attr("src","CatSlime.gif");
+	img.src = "CatSlime.gif"+"?a="+Math.random();
 	c = {"position":"absolute", "top":y-10, "left":x};
 	$(img).css(c);
+<<<<<<< HEAD
+	charCoords[[x,y]] = [x,y];
+=======
 	$(img).attr("id", "player");
 	coordinates[[x,y]] = [x,y];
+>>>>>>> refs/remotes/origin/master
 	document.body.appendChild(img);
 }
 
