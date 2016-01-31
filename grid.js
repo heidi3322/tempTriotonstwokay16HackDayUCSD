@@ -6,6 +6,33 @@ var enemies = [];
 var canKey = true;
 var numenemies = 0;
 
+//function matchVert(x, y, array) {
+//	keys = Object.keys(array);
+//	bool = false;
+//	keys.forEach(function (e){
+//		if(array[e][0] == x && array[e][1] > y){
+//			bool = true;
+//		}
+//	})
+//	return bool;
+//}
+
+function drawWalls(array) {
+	keys = Object.keys(array);
+	keys.forEach(function(e){
+		x = array[e][0];
+		y = array[e][1];
+//		if(matchVert(x, y, array) == false){
+			for(i = 0; i < 40; i++){
+				img = document.createElement("img");
+				$(img).attr("src", "Assets/WallFall.png");
+				c = {"position":"absolute", "top":y + 10 + i*41, "left":x, "z-index":-1}
+				$(img).css(c);
+				document.body.appendChild(img);
+			}
+//		}
+	});
+}
 
 function createHexagon(x, y){
 	img = document.createElement("img");
@@ -202,6 +229,7 @@ $(document).ready(function(){
 	createHexagon(x, y);
 	a = getNeighbors(x,y);
 	createRandom(a[0][0], a[0][1], 100);
+	drawWalls(coordinates);
 	add_player(640, 220);
 	console.log(numcoords);
 	numenemies = Math.floor(numcoords/25) + 1;
