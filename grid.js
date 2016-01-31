@@ -66,7 +66,7 @@ function add_player(x,y)
 {
 	var img = document.createElement("img");
 	$(img).attr("src","CatSlime.gif");
-	img.src = "CatSlime.gif"+"?a="+Math.random();
+	img.src = "CatLoop.gif"+"?a="+Math.random();
 	c = {"position":"absolute", "top":y, "left":x};
 	$(img).css(c);
 	charCoords[[x,y]] = [x,y];
