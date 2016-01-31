@@ -16,5 +16,5 @@ Use the 'qweasd' keys on your keyboard to control the motion of the cat on the h
 - Grant Summers
 - Heidi Wang
 - Victoria Tom
-- Daniel
-- Kyle
+- Daniel Lee
+- Kyle Leung
