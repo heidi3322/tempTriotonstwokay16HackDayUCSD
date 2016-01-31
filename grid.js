@@ -23,7 +23,7 @@ function drawWalls(array) {
 		x = array[e][0];
 		y = array[e][1];
 //		if(matchVert(x, y, array) == false){
-			for(i = 0; i < 40; i++){
+			for(i = 0; i < 12; i++){
 				img = document.createElement("img");
 				$(img).attr("src", "Assets/WallFall.png");
 				c = {"position":"absolute", "top":y + 10 + i*41, "left":x, "z-index":-1}
