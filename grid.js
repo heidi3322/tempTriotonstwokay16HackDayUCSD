@@ -21,7 +21,9 @@ function canMove(x, y) {
 }
 
 function move_player(x, y) {
-    if (canMove((player.xPos +x), (player.yPos+y)) == false) {
+    latitude = x*47.67 
+    longitude = y*27.5
+    if (canMove((player.xPos +latitude), (player.yPos+longitude)) == false) {
         return;
     }
     player.xPos += round(x*47.67,2);
