@@ -1,11 +1,12 @@
 var coordinates = {}
 var numcoords = 0
 var player = {xPos: x, yPos: y};
+var charCoords= {}
 
 
 function createHexagon(x, y){
 	img = document.createElement("img");
-	$(img).attr("src", "hexagon.png");
+	$(img).attr("src", "Hexagon2.png");
 	c = {"position":"absolute", "top":y, "left":x}
 	$(img).css(c);
 	coordinates[[x, y]] = [x, y];
@@ -68,8 +69,11 @@ function add_player(x,y)
 {
 	var img = document.createElement("img");
 	$(img).attr("src","CatSlime.gif");
+	img.src = "CatSlime.gif"+"?a="+Math.random();
 	c = {"position":"absolute", "top":y-10, "left":x};
 	$(img).css(c);
+	charCoords[[x,y]] = [x,y];
+	$(img).attr("id", "player");
 	coordinates[[x,y]] = [x,y];
 	document.body.appendChild(img);
     player.xPos = x;
@@ -140,26 +144,16 @@ function createRandom(x, y, prob){
 				x = neighbors[e][0];
 				y = neighbors[e][1];
 				createHexagon(x,y);
-				if(Math.random()*100 <= prob -5){
+				if(Math.random()*100 <= prob -2){
 					fillarray[counter++] = [x,y];
 				}
-				/*newList = filter(getNeighbors(x,y));
-				newKey = Object.keys(newList);
-				probtwo =  80;
-				newKey.forEach(function(f){
-					if(Math.random()*100 <= probtwo){
-						createHexagon(newList[f][0],newList[f][1]);
-						probtwo -=25;
-					}
-				});*/
 			}
 		});
 		shuffle(fillarray);
 		console.log("filled:" + fillarray);
 		for(i = 0; i < fillarray.length; i++){
-			
 			createRandom(fillarray[i][0], fillarray[i][1], prob - 1);
-		}
+		}	
 	}
 }
 
@@ -167,8 +161,15 @@ $(document).ready(function(){
 	x = 640
 	y = 220
 	createHexagon(x, y);
-	createRandom(x, y, 100);
 	add_player(x,y);
+	a = getNeighbors(x,y);
+	createRandom(a[0][0], a[0][1], 100);
+	createRandom(a[1][0], a[1][1], 100);
+	createRandom(a[2][0], a[2][1], 100);
+	createRandom(a[3][0], a[3][1], 100);
+	createRandom(a[4][0], a[4][1], 100);
+	createRandom(a[5][0], a[5][1], 100);
+
 	
 	
 });
