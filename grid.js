@@ -6,18 +6,42 @@ var enemies = [];
 var canKey = true;
 var numenemies = 0;
 
+//function matchVert(x, y, array){
+//	first = false;
+//	second = false;
+//	third = false;
+//	keys = Object.keys(array);
+//	keys.forEach(function (e) {
+//		if(array[e][0] == y){
+//			first = true;
+//		}
+//		if(array[e][0] == round(x + 47.67, 2) && array[e][1] == round(y + 27.5, 2)){
+//			second = true;
+//		}
+//		if(array[e][0] == round(x - 47.67, 2) && array[e][1] == round(y + 27.5, 2)){
+//			third = true;
+//		}
+//	});
+//	if(first && second && third){
+//		return true;
+//	}
+//	return false;
+//}
+
 function drawWalls(array) {
 	keys = Object.keys(array);
 	keys.forEach(function(e){
 		x = array[e][0];
 		y = array[e][1];
-		for(i = 0; i < 12; i++){
-			img = document.createElement("img");
-			$(img).attr("src", "Assets/WallFall.png");
-			c = {"position":"absolute", "top":y + 10 + i*41, "left":x, "z-index":-1}
-			$(img).css(c);
-			document.body.appendChild(img);
-		}
+//		if(matchVert(x, y, array) == false){
+			for(i = 0; i < 15; i++){
+				img = document.createElement("img");
+				$(img).attr("src", "Assets/WallFall.png");
+				c = {"position":"absolute", "top":y + 10 + 28 + i*38, "left":x, "z-index":-1}
+				$(img).css(c);
+				document.body.appendChild(img);
+			}
+//		}
 	});
 }
 
