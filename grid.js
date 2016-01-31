@@ -1,47 +1,103 @@
 var coordinates = {};
 var numcoords = 0;
 var player = {xPos: 640, yPos: 220};
-var charCoords = {};
+var playerLoc = new Location(640,220);
 var enemies = [];
+var hexagons = {};
 var canKey = true;
 var numenemies = 0;
+var tolerance = 0.75;
 
-function drawWalls(array) {
-	keys = Object.keys(array);
-	keys.forEach(function(e){
-		x = array[e][0];
-		y = array[e][1];
-		for(i = 0; i < 15; i++){
-			img = document.createElement("img");
-			$(img).attr("src", "Assets/WallFall.png");
-			c = {"position":"absolute", "top":y + 10 + 28 + i*38, "left":x, "z-index":-1}
-			$(img).css(c);
-			document.body.appendChild(img);
+function Location(x, y){
+	this.x = round(x,2);
+	this.y = round(y,2);
+	
+	this.equals = function(loc){
+		return Math.abs(this.x - loc.x) < tolerance && Math.abs(this.y - loc.y) < tolerance;
+	}
+	this.move = function(newx, newy){
+		this.x = newx;
+		this.y = newy;
+	}
+}
+
+
+function Hexagon(x,y){
+	this.x = x;
+	this.y = y;
+	this.img  = document.createElement("img");
+	this.loc = new Location(this.x, this.y);
+	coordinates[[this.x, this.y]] = [this.x, this.y];
+	
+	this.draw = function(){
+		$(this.img).attr("src", "Assets/Hexagon2.png");
+		c = {"position":"absolute", "top":this.y + 10, "left":this.x}
+		$(this.img).css(c);
+
+		document.body.appendChild(this.img);
+		
+	}
+	
+	this.branch = function(num){
+		spots = filter(getNeighbors(this.loc));
+		if(spots.length > 0){
+			spots = shuffle(spots);
 		}
+		for(i = 0; i < num && i < spots.length; i++){
+
+			createHexagon(spots[i][0], spots[i][1])
+		}
+	}
+	
+	this.numNeighbors = function(){
+		return 6-filter(getNeighbors(this.loc)).length;
+	}
+	
+}
+
+function inObject(obj, l){
+	for(i = 0; i < Object.keys(obj).length; i++){
+		if(obj[Object.keys(obj)[i]].loc.equals(l)){
+			return true;
+		}
+	}
+	return false;
+}
+
+
+function drawWalls() {
+	keys = Object.keys(hexagons);
+	keys.forEach(function(e){
+			x = hexagons[e].x;
+			y = hexagons[e].y;
+			for(i = 0; i < 2; i++){
+				img = document.createElement("img");
+				$(img).attr("src", "Assets/WallFall.png");
+				c = {"position":"absolute", "top":y + 10 + 28 + i*38, "left":x, "z-index":-1}
+				$(img).css(c);
+				document.body.appendChild(img);
+			}
+			
 	});
 }
 
 function createHexagon(x, y){
-	img = document.createElement("img");
-	$(img).attr("src", "Assets/Hexagon2.png");
-	c = {"position":"absolute", "top":y + 10, "left":x}
-	$(img).css(c);
-	coordinates[[x, y]] = [x, y];
-	numcoords++;
-	document.body.appendChild(img);
+	hex = new Hexagon(x, y);
+	hex.draw();
+	hexagons[numcoords++] = hex;
 }
 
 function canMove(x, y) {
-	keys = Object.keys(coordinates);
-	inside = false;
-	keys.forEach(function(e){
-		if (Math.abs(coordinates[e][0]-x) < 0.75 && Math.abs(coordinates[e][1] - y) < 0.5 ) {
-			inside = true;
+	for(i = 0; i < numcoords; i++){
+		loc = new Location(x,y);
+			if(inObject(hexagons, loc)){
+				return true
+			}
 		}
-		
-	})
-    return inside; 
+	return false;
 }
+
+
 
 function move_player(x, y) {
     latitude = round(x*47.67, 2);
@@ -82,7 +138,7 @@ function add_player(x,y){
 	img.src = "Assets/CatLoop.gif"+"?a="+Math.random();
 	c = {"position":"absolute", "top":y, "left":x};
 	$(img).css(c);
-	charCoords[[x,y]] = [x,y];
+	playerLoc = new Location(x,y);
 	$(img).attr("id", "player");
 	coordinates[[x,y]] = [x,y];
 	document.body.appendChild(img);
@@ -90,7 +146,9 @@ function add_player(x,y){
     player.yPos = y; 
 }
 
-function getNeighbors(x, y){
+function getNeighbors(loc){
+	x = loc.x
+	y = loc.y
 	neighbors = {};
 	neighbors[0] = [round(x-47.67,2), round(y+27.5,2)];
 	neighbors[1] = [round(x+47.67,2), round(y+27.5,2)];
@@ -126,9 +184,11 @@ function shuffle(o){
 function Enemy(x, y, name, id){
 	this.x = x;
 	this.y = y;
+	this.loc = new Location(this.x, this.y);
 	this.name = name;
 	this.id = id;
 	this.img = document.createElement("img");
+	
 	this.draw = function(){
 		img = this.img;
 		$(img).attr("src", name);
@@ -140,27 +200,23 @@ function Enemy(x, y, name, id){
 	}
 	
 	this.move = function(){
-		//$(this.img).remove();
-		//this.img = document.createElement("img");
 		img = this.img;
-		console.log(this.x + " " + this.y)
-		console.log(getNeighbors(this.x, this.y))
-		spots = getNeighbors(this.x, this.y);
-		console.log(spots.length);
+		spots = getNeighbors(this.loc);
 		valid = [];
 		Object.keys(spots).forEach(function(i){
 			e = spots[i];
-			k = Object.keys(coordinates)
+			k = Object.keys(hexagons)
 			k.forEach(function(f){
-				if(Math.abs(coordinates[f][0] - e[0]) < 0.75 && Math.abs(coordinates[f][1] - e[1]) < 0.75){
-					console.log("yes")
-					valid.push([e[0], e[1]])
+				newLoc = new Location(e[0],e[1]);
+				if(inObject(hexagons, newLoc) && !inObject(enemies, newLoc)){
+					valid.push([newLoc.x, newLoc.y])
 				}
 			})
 		});
 		index = Math.floor(Math.random()*Object.keys(valid).length);
 		this.x = valid[index][0];
 		this.y = valid[index][1];
+		this.loc = new Location(this.x, this.y);
 		c = {"position":"absolute", "top": this.y , "left": this.x};
 		$(img).css(c);
 	}
@@ -170,40 +226,29 @@ function addEnemies(){
 	names = ["Assets/EvilLoop.gif", "Assets/SkullLoop.gif", "Assets/SlimeLoop.gif", "Assets/ActualEvilLoop.gif"];
 	for(i = 0; i < numenemies; i++){
 
-		keys = Object.keys(coordinates);
-		randind = Math.floor(Math.random()*keys.length);
-		while(coordinates[keys[randind]] == [640, 220]){
-			randind = Math.floor(Math.random()*keys.length);
+		keys = Object.keys(hexagons);
+		randindex = Math.floor(Math.random()*keys.length);
+		while(hexagons[randindex].loc.equals(playerLoc)){
+			randindex = Math.floor(Math.random()*keys.length);
 		}
-		x = coordinates[keys[randind]][0];
-		y = coordinates[keys[randind]][1];
+		x = hexagons[keys[randindex]].loc.x;
+		y = hexagons[keys[randindex]].loc.y;
 		enemies[i] = new Enemy(x,y, names[Math.floor(Math.random()*names.length)], i);
 		enemies[i].draw();
 	}
 }
 
-function createRandom(x, y, prob){
-	neighbors = filter(getNeighbors(x,y))
-	keys = Object.keys(neighbors);
-	if(keys.length > 0){
-		counter = 0;
-		fillarray = [];
-		emptycounter = 0;
-		emptyarray = [];
-		keys.forEach(function(e){
-			if(Math.random()*100 <= prob){
-				x = neighbors[e][0];
-				y = neighbors[e][1];
-				createHexagon(x,y);
-				if(Math.random()*100 <= prob ){
-					fillarray[counter++] = [x,y];
-				}
+function createRandom(prob){
+	hexagons[0].branch(6);
+	for(i = 0; i < Object.keys(hexagons).length; i++){
+		if(Math.random()*100 <= prob){
+			index = Math.floor(Math.random()*Object.keys(hexagons).length);
+			if(hexagons[index].numNeighbors() > 2){
+				index = Math.floor(Math.random()*Object.keys(hexagons).length);
 			}
-		});
-		shuffle(fillarray);
-		for(i = 0; i < fillarray.length; i++){
-			createRandom(fillarray[i][0], fillarray[i][1], prob);
-		}	
+			hexagons[index].branch(1);
+			prob -= 1.2;
+		}
 	}
 }
 
@@ -212,11 +257,12 @@ $(document).ready(function(){
 	y = 220
 	createHexagon(x, y);
 	a = getNeighbors(x,y);
-	createRandom(a[0][0], a[0][1], 100);
-	drawWalls(coordinates);
+	createRandom(100);
+	drawWalls(hexagons);
+
 	add_player(640, 220);
-	console.log(numcoords);
-	numenemies = Math.floor(numcoords/25) + 1;
+	
+	numenemies = Math.floor(numcoords/25) + 2;
 	addEnemies();
 	setInterval(function(){
 		enemies.forEach(function(e){
