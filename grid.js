@@ -34,12 +34,9 @@ function add_player(x,y)
 	img.src = "CatSlime.gif"+"?a="+Math.random();
 	c = {"position":"absolute", "top":y-10, "left":x};
 	$(img).css(c);
-<<<<<<< HEAD
 	charCoords[[x,y]] = [x,y];
-=======
 	$(img).attr("id", "player");
 	coordinates[[x,y]] = [x,y];
->>>>>>> refs/remotes/origin/master
 	document.body.appendChild(img);
 }
 
@@ -113,7 +110,6 @@ function createRandom(x, y, prob){
 			}
 		});
 		shuffle(fillarray);
-		console.log("filled:" + fillarray);
 		for(i = 0; i < fillarray.length; i++){
 			createRandom(fillarray[i][0], fillarray[i][1], prob - 1);
 		}	
