@@ -2,12 +2,13 @@ var coordinates = {}
 var numcoords = 0
 var player = {xPos: 640, yPos: 220};
 var charCoords= {}
+var canKey = true;
 
 
 function createHexagon(x, y){
 	img = document.createElement("img");
 	$(img).attr("src", "Hexagon2.png");
-	c = {"position":"absolute", "top":y, "left":x}
+	c = {"position":"absolute", "top":y + 10, "left":x}
 	$(img).css(c);
 	coordinates[[x, y]] = [x, y];
 	document.body.appendChild(img);
@@ -17,7 +18,6 @@ function canMove(x, y) {
 	keys = Object.keys(coordinates);
 	inside = false;
 	keys.forEach(function(e){
-		console.log(Math.abs(coordinates[e][0]-x) + " " + Math.abs(coordinates[e][1]-y))
 		if (Math.abs(coordinates[e][0]-x) < 0.75 && Math.abs(coordinates[e][1] - y) < 0.5 ) {
 			inside = true;
 		}
@@ -30,16 +30,15 @@ function canMove(x, y) {
 function move_player(x, y) {
     latitude = round(x*47.67, 2);
     longitude = round(y*27.5, 2);
-	console.log(latitude + " " + longitude);
 	xPos = round(parseFloat($("#player").css("left").replace("px", "")),2);
 	yPos = round(parseFloat($("#player").css("top").replace("px", "")),2);
-	console.log(xPos + " " + yPos)
-	console.log(round((xPos +latitude),2) + " " + round((yPos + longitude),2));
+	
+	
     if (canMove(round((xPos +latitude),2), round((yPos+longitude),2)) == false) {
-		console.log(false);
+		
         return;
     }
-	console.log(true);
+	
     xPos += round(x*47.67,2);
     yPos += round(y*27.5, 2);
 	
@@ -146,22 +145,29 @@ $(document).ready(function(){
 	
 });
 $(document).keydown(function (e) {
-	if (e.keyCode == 81) { //q
-		move_player(-1, -1);
-	} 
-	if (e.keyCode == 69) { //e
-		move_player(1, -1); 
-	}
-	if (e.keyCode == 87) { //w
-		move_player(0, -2); 
-	}
-	if (e.keyCode == 83) { //s
-		move_player(0, 2); 
-	}
-	if (e.keyCode == 65) {  //a
-		move_player(-1, 1);
-	} 
-	if (e.keyCode == 68) { //d 
-		move_player(1, 1); 
+	if(canKey){
+		canKey = false;
+		if (e.keyCode == 81) { //q
+			move_player(-1, -1);
+		} 
+		if (e.keyCode == 69) { //e
+			move_player(1, -1); 
+		}
+		if (e.keyCode == 87) { //w
+			move_player(0, -2); 
+		}
+		if (e.keyCode == 83) { //s
+			move_player(0, 2); 
+		}
+		if (e.keyCode == 65) {  //a
+			move_player(-1, 1);
+		} 
+		if (e.keyCode == 68) { //d 
+			move_player(1, 1); 
+		}
 	}
 });
+
+$(document).keyup(function(){
+	canKey = true;
+})
