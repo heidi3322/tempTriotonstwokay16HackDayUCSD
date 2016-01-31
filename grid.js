@@ -1,5 +1,6 @@
 var coordinates = {}
 var numcoords = 0
+var player = {xPos: x, yPos: y};
 
 
 function createHexagon(x, y){
@@ -19,12 +20,35 @@ function canMove(x, y) {
 }
 
 function move_player(x, y) {
-    if (canMove(x, y) == false) {
+    if (canMove((player.xPos +x), (player.yPos+y)) == false) {
         return;
     }
+    player.xPos += round(x*47.67,2);
+    player.yPos += round(y*27.5, 2); 
     
-    
-    
+}
+
+function doKeyDown(e) {
+    var element = document.getElementById("player")
+    alert(e.keyCode)
+    if (e.keyCode == 81) { //q
+        move_player(-1, -1);
+    } 
+    if (e.keyCode == 69) { //e
+        move_player(1, -1); 
+    }
+    if (e.keyCode == 87) { //w
+        move_player(0, -1); 
+    }
+    if (e.keyCode == 83) { //s
+        move_player(0, 1); 
+    }
+    if (e.keyCode == 65) {  //a
+        move_player(-1, 1);
+    } 
+    if (e.keyCode == 68) { //d 
+        move_player(1, 1); 
+    }
 }
 function filter(obj){
 	keys = Object.keys(obj);
@@ -48,6 +72,8 @@ function add_player(x,y)
 	$(img).css(c);
 	coordinates[[x,y]] = [x,y];
 	document.body.appendChild(img);
+    player.xPos = x;
+    player.yPos = y; 
 }
 
 function getNeighbors(x, y){
