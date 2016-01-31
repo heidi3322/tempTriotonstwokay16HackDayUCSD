@@ -1,8 +1,10 @@
-var coordinates = {}
-var numcoords = 0
+var coordinates = {};
+var numcoords = 0;
 var player = {xPos: 640, yPos: 220};
-var charCoords= {}
+var charCoords = {};
+var enemies = [];
 var canKey = true;
+var numenemies = 0;
 
 
 function createHexagon(x, y){
@@ -11,6 +13,7 @@ function createHexagon(x, y){
 	c = {"position":"absolute", "top":y + 10, "left":x}
 	$(img).css(c);
 	coordinates[[x, y]] = [x, y];
+	numcoords++;
 	document.body.appendChild(img);
 	
 }
@@ -109,6 +112,54 @@ function shuffle(o){
     return o;
 }
 
+function Enemy(x, y, name, id){
+	this.x = x;
+	this.y = y +10;
+	this.name = name;
+	this.id = id;
+	this.img = document.createElement("img");
+	this.draw = function(){
+		img = this.img;
+		$(img).attr("src", name);
+		$(img).attr("id" , name+id);
+		c = {"position":"absolute", "top":y, "left":x}
+		$(img).css(c);
+		document.body.appendChild(img);
+		
+	}
+	
+	this.move = function(){
+		//$(this.img).remove();
+		//this.img = document.createElement("img");
+		img = this.img;
+		console.log(this.x + " " + this.y)
+		console.log(getNeighbors(this.x, this.y))
+		spots = filter(getNeighbors(this.x, this.y));
+		console.log(spots);
+		index = Math.floor(Math.random()*spots.length);
+		console.log(index);
+		this.x = spots[index][0];
+		this.y = spots[index][1];
+		c = {"position":"absolute", "top": this.y , "left": this.x};
+		$(img).css(c);
+	}
+}
+
+function addEnemies(){
+	names = ["EvilLoop.gif", "SkullLoop.gif", "SlimeLoop.gif", "ActualEvilLoop.gif"];
+	for(i = 0; i < numenemies; i++){
+
+		keys = Object.keys(coordinates);
+		randind = Math.floor(Math.random()*keys.length);
+		while(coordinates[keys[randind]] == [640, 220]){
+			randind = Math.floor(Math.random()*keys.length);
+		}
+		x = coordinates[keys[randind]][0];
+		y = coordinates[keys[randind]][1];
+		enemies[i] = new Enemy(x,y, names[Math.floor(Math.random()*names.length)], i);
+		enemies[i].draw();
+	}
+}
 
 function createRandom(x, y, prob){
 	neighbors = filter(getNeighbors(x,y))
@@ -123,14 +174,14 @@ function createRandom(x, y, prob){
 				x = neighbors[e][0];
 				y = neighbors[e][1];
 				createHexagon(x,y);
-				if(Math.random()*100 <= prob -2){
+				if(Math.random()*100 <= prob ){
 					fillarray[counter++] = [x,y];
 				}
 			}
 		});
 		shuffle(fillarray);
 		for(i = 0; i < fillarray.length; i++){
-			createRandom(fillarray[i][0], fillarray[i][1], prob - 1);
+			createRandom(fillarray[i][0], fillarray[i][1], prob);
 		}	
 	}
 }
@@ -142,7 +193,9 @@ $(document).ready(function(){
 	a = getNeighbors(x,y);
 	createRandom(a[0][0], a[0][1], 100);
 	add_player(640, 220);
-	
+	console.log(numcoords);
+	numenemies = Math.floor(numcoords/25) + 1;
+	addEnemies();
 });
 $(document).keydown(function (e) {
 	if(canKey){
