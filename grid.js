@@ -150,7 +150,6 @@ function createRandom(x, y, prob){
 			}
 		});
 		shuffle(fillarray);
-		console.log("filled:" + fillarray);
 		for(i = 0; i < fillarray.length; i++){
 			createRandom(fillarray[i][0], fillarray[i][1], prob - 1);
 		}	
