@@ -9,7 +9,7 @@ var numenemies = 0;
 
 function createHexagon(x, y){
 	img = document.createElement("img");
-	$(img).attr("src", "Hexagon2.png");
+	$(img).attr("src", "Assets/Hexagon2.png");
 	c = {"position":"absolute", "top":y + 10, "left":x}
 	$(img).css(c);
 	coordinates[[x, y]] = [x, y];
@@ -68,8 +68,8 @@ function filter(obj){
 function add_player(x,y)
 {
 	var img = document.createElement("img");
-	$(img).attr("src","CatSlime.gif");
-	img.src = "CatLoop.gif"+"?a="+Math.random();
+	$(img).attr("src","Assets/CatSlime.gif");
+	img.src = "Assets/CatLoop.gif"+"?a="+Math.random();
 	c = {"position":"absolute", "top":y, "left":x};
 	$(img).css(c);
 	charCoords[[x,y]] = [x,y];
@@ -146,7 +146,7 @@ function Enemy(x, y, name, id){
 }
 
 function addEnemies(){
-	names = ["EvilLoop.gif", "SkullLoop.gif", "SlimeLoop.gif", "ActualEvilLoop.gif"];
+	names = ["Assets/EvilLoop.gif", "Assets/SkullLoop.gif", "Assets/SlimeLoop.gif", "Assets/ActualEvilLoop.gif"];
 	for(i = 0; i < numenemies; i++){
 
 		keys = Object.keys(coordinates);
