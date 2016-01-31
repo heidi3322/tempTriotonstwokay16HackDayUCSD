@@ -114,7 +114,7 @@ function shuffle(o){
 
 function Enemy(x, y, name, id){
 	this.x = x;
-	this.y = y +10;
+	this.y = y;
 	this.name = name;
 	this.id = id;
 	this.img = document.createElement("img");
@@ -134,12 +134,22 @@ function Enemy(x, y, name, id){
 		img = this.img;
 		console.log(this.x + " " + this.y)
 		console.log(getNeighbors(this.x, this.y))
-		spots = filter(getNeighbors(this.x, this.y));
-		console.log(spots);
-		index = Math.floor(Math.random()*spots.length);
-		console.log(index);
-		this.x = spots[index][0];
-		this.y = spots[index][1];
+		spots = getNeighbors(this.x, this.y);
+		console.log(spots.length);
+		valid = [];
+		Object.keys(spots).forEach(function(i){
+			e = spots[i];
+			k = Object.keys(coordinates)
+			k.forEach(function(f){
+				if(Math.abs(coordinates[f][0] - e[0]) < 0.75 && Math.abs(coordinates[f][1] - e[1]) < 0.75){
+					console.log("yes")
+					valid.push([e[0], e[1]])
+				}
+			})
+		});
+		index = Math.floor(Math.random()*Object.keys(valid).length);
+		this.x = valid[index][0];
+		this.y = valid[index][1];
 		c = {"position":"absolute", "top": this.y , "left": this.x};
 		$(img).css(c);
 	}
@@ -196,6 +206,11 @@ $(document).ready(function(){
 	console.log(numcoords);
 	numenemies = Math.floor(numcoords/25) + 1;
 	addEnemies();
+	setInterval(function(){
+		enemies.forEach(function(e){
+			e.move()
+		})
+	}, 1000);
 });
 $(document).keydown(function (e) {
 	if(canKey){
