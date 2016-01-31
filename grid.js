@@ -6,31 +6,18 @@ var enemies = [];
 var canKey = true;
 var numenemies = 0;
 
-//function matchVert(x, y, array) {
-//	keys = Object.keys(array);
-//	bool = false;
-//	keys.forEach(function (e){
-//		if(array[e][0] == x && array[e][1] > y){
-//			bool = true;
-//		}
-//	})
-//	return bool;
-//}
-
 function drawWalls(array) {
 	keys = Object.keys(array);
 	keys.forEach(function(e){
 		x = array[e][0];
 		y = array[e][1];
-//		if(matchVert(x, y, array) == false){
-			for(i = 0; i < 12; i++){
-				img = document.createElement("img");
-				$(img).attr("src", "Assets/WallFall.png");
-				c = {"position":"absolute", "top":y + 10 + i*41, "left":x, "z-index":-1}
-				$(img).css(c);
-				document.body.appendChild(img);
-			}
-//		}
+		for(i = 0; i < 12; i++){
+			img = document.createElement("img");
+			$(img).attr("src", "Assets/WallFall.png");
+			c = {"position":"absolute", "top":y + 10 + i*41, "left":x, "z-index":-1}
+			$(img).css(c);
+			document.body.appendChild(img);
+		}
 	});
 }
 
@@ -42,8 +29,8 @@ function createHexagon(x, y){
 	coordinates[[x, y]] = [x, y];
 	numcoords++;
 	document.body.appendChild(img);
-	
 }
+
 function canMove(x, y) {
 	keys = Object.keys(coordinates);
 	inside = false;
@@ -53,7 +40,6 @@ function canMove(x, y) {
 		}
 		
 	})
-    
     return inside; 
 }
 
@@ -73,8 +59,6 @@ function move_player(x, y) {
     yPos += round(y*27.5, 2);
 	
 	$("#player").css({"top": yPos, "left":xPos});
-	
-    
 }
 
 
@@ -92,8 +76,7 @@ function filter(obj){
 	return valid;
 }
 
-function add_player(x,y)
-{
+function add_player(x,y){
 	var img = document.createElement("img");
 	$(img).attr("src","Assets/CatSlime.gif");
 	img.src = "Assets/CatLoop.gif"+"?a="+Math.random();
@@ -134,6 +117,7 @@ function round(num, places){
 	return Math.round(num)/a
 	
 }
+
 function shuffle(o){
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
