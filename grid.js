@@ -5,6 +5,7 @@ var playerLoc = new Location(640,220);
 var enemies = [];
 var hexagons = {};
 var canKey = true;
+var enemyCanMove = false;
 var numenemies = 0;
 var tolerance = 0.75;
 
@@ -94,6 +95,38 @@ function Enemy(x, y, name, id){
 	}
 }
 
+function Player(x, y){
+	this.x = x;
+	this.y = y;
+	this.loc = new Location(this.x, this.y);
+	this.img = document.createElement("img");
+	
+	this.draw = function(){
+		$(this.img).attr("src","Assets/CatSlime.gif");
+		this.img.src = "Assets/CatLoop.gif"+"?a="+Math.random();
+		c = {"position":"absolute", "top":y, "left":x};
+		$(this.img).css(c);
+		$(this.img).attr("id", "player");
+		document.body.appendChild(this.img);
+	}
+	
+	this.move = function(x, y){
+		latitude = round(x*47.67, 2);
+		longitude = round(y*27.5, 2);
+		xPos = this.x;
+		yPos = this.y;
+		if (canMove(round((xPos +latitude),2), round((yPos+longitude),2)) == false) {
+			return;
+		}
+		this.x += round(x*47.67,2);
+		this.y += round(y*27.5, 2);
+		this.loc = new Location(this.x, this.y);
+		$("#player").css({"top": this.y, "left":this.x});
+		enemyCanMove = true;
+	}
+	
+}
+
 function inObject(obj, l){
 	for(i = 0; i < Object.keys(obj).length; i++){
 		if(obj[Object.keys(obj)[i]].loc.equals(l)){
@@ -102,7 +135,6 @@ function inObject(obj, l){
 	}
 	return false;
 }
-
 
 function drawWalls() {
 	keys = Object.keys(hexagons);
@@ -135,19 +167,6 @@ function canMove(x, y) {
 	return false;
 }
 
-function move_player(x, y) {
-    latitude = round(x*47.67, 2);
-    longitude = round(y*27.5, 2);
-	xPos = round(parseFloat($("#player").css("left").replace("px", "")),2);
-	yPos = round(parseFloat($("#player").css("top").replace("px", "")),2);
-    if (canMove(round((xPos +latitude),2), round((yPos+longitude),2)) == false) {
-        return;
-    }
-    xPos += round(x*47.67,2);
-    yPos += round(y*27.5, 2);
-	$("#player").css({"top": yPos, "left":xPos});
-}
-
 function filter(obj){
 	keys = Object.keys(obj);
 	valid = [];
@@ -155,25 +174,11 @@ function filter(obj){
 	keys.forEach(function(e){
 		x = obj[e][0];
 		y = obj[e][1];
-		if(x >= 64 && y >= 55 && x <= 1216 && y <= 495 && objValIndexOf(coordinates,[x,y]) == -1){
+		if(x >= 64 && y >= 55 && x <= $(document).width()-64 && y <= $(document).height()-55 && objValIndexOf(coordinates,[x,y]) == -1){
 			valid[counter++] = obj[e];
 		}
 	});
 	return valid;
-}
-
-function add_player(x,y){
-	var img = document.createElement("img");
-	$(img).attr("src","Assets/CatSlime.gif");
-	img.src = "Assets/CatLoop.gif"+"?a="+Math.random();
-	c = {"position":"absolute", "top":y, "left":x};
-	$(img).css(c);
-	playerLoc = new Location(x,y);
-	$(img).attr("id", "player");
-	coordinates[[x,y]] = [x,y];
-	document.body.appendChild(img);
-    player.xPos = x;
-    player.yPos = y; 
 }
 
 function getNeighbors(loc){
@@ -240,13 +245,16 @@ function createRandom(prob){
 }
 
 $(document).ready(function(){
-	x = 640;
-	y = 220;
+	x = Math.round($(document).width()/2)
+	y = Math.round($(document).height()/2)
 	createHexagon(x, y);
 	a = getNeighbors(x,y);
 	createRandom(100);
 	drawWalls();
-	add_player(640, 220);
+	starthex = hexagons[Math.floor(Math.random()*Object.keys(hexagons).length)]
+	playerLoc = new Location(starthex.loc.x, starthex.loc.y);
+	player = new Player(playerLoc.x, playerLoc.y)
+	player.draw();
 	numenemies = Math.floor(numcoords/25) + 2;
 	addEnemies();
 });
@@ -255,26 +263,29 @@ $(document).keydown(function (e) {
 	if(canKey){
 		canKey = false;
 		if (e.keyCode == 81) { //q
-			move_player(-1, -1);
+			player.move(-1, -1);
 		} 
 		if (e.keyCode == 69) { //e
-			move_player(1, -1); 
+			player.move(1, -1); 
 		}
 		if (e.keyCode == 87) { //w
-			move_player(0, -2); 
+			player.move(0, -2); 
 		}
 		if (e.keyCode == 83) { //s
-			move_player(0, 2); 
+			player.move(0, 2); 
 		}
 		if (e.keyCode == 65) {  //a
-			move_player(-1, 1);
+			player.move(-1, 1);
 		} 
 		if (e.keyCode == 68) { //d 
-			move_player(1, 1); 
+			player.move(1, 1); 
 		}
-		enemies.forEach(function(e){
-			e.move();
-		})
+		if(enemyCanMove){
+			enemies.forEach(function(e){
+				e.move();
+			})
+			enemyCanMove = false;
+		}
 	}
 });
 
